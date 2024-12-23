@@ -9,6 +9,7 @@ env:
   REPO_URL: https://github.com/LiBwrt/openwrt-6.x.git
   REPO_BRANCH: main
   CONFIG_FILE: configs/ipq60xx.config
+  DIY_P1_SH: diy-part1.sh
   DIY_SCRIPT: diy-script.sh
   CLASH_KERNEL: amd64
   CACHE_TOOLCHAIN: true
@@ -76,7 +77,13 @@ jobs:
         else
         echo "VERSION_LOG=暂无更新" >> $GITHUB_ENV
         fi
-
+    - name: Load custom feeds 
+      run: |
+        [ -e $FEEDS_CONF ] && mv $FEEDS_CONF openwrt/feeds.conf.default
+        chmod +x $DIY_P1_SH
+        cd openwrt
+        $GITHUB_WORKSPACE/$DIY_P1_SH
+        
     - name: Generate Variables(生成变量)
       run: |
         cp $CONFIG_FILE $OPENWRT_PATH/.config
